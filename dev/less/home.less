@@ -1,9 +1,9 @@
-@import "color-var-func";
+@import "_color-var-func";
 
 html, body {
   margin: 0;
   padding: 20px;
-  font-family: $font-family;
+  font-family: @font-family;
 }
 .daterange {
   float: left;
@@ -14,13 +14,13 @@ html, body {
   }
 }
 h1 {
-  font-size: rem(32);
+  font-size: 2rem;
   margin: 0;
-  padding-bottom: rem(24);
-  border-bottom: 1px solid $mouse;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid @mouse;
 
   a {
-    color: $blue;
+    color: @blue;
     text-decoration: none;
 
     &:hover {
@@ -29,13 +29,13 @@ h1 {
   }
 }
 footer {
-  padding-top: rem(24);
-  margin-top: rem(24);
-  border-top: 1px solid $mouse;
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+  border-top: 1px solid @mouse;
   clear: both;
 
   a {
-    color: $blue;
+    color: @blue;
     text-decoration: none;
 
     &:hover {

@@ -1,3 +1,4 @@
 .publish
 node_modules
 public/.DS_Store
+public/css/_color-var-func.css

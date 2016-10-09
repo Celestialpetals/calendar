@@ -1,6 +1,6 @@
 var gulp = require('gulp'),
     ghPages = require('gulp-gh-pages'),
-    sass = require('gulp-sass'),
+    less = require('gulp-less'),
     autoprefixer = require('gulp-autoprefixer'),
     minifycss = require('gulp-minify-css'),
     uglify = require('gulp-uglify'),
@@ -11,8 +11,12 @@ var gulp = require('gulp'),
 // ROOT TASKS // ---------------------------------------------------------
 // Main style task  
 gulp.task('css', function() {
-  return gulp.src('dev/sass/**/**.scss')
-    .pipe(sass())
+  return gulp.src('dev/less/**/**.less')
+    .pipe(less({
+      strictImports: true,
+      strictMath: true,
+      strictUnits: true
+    }))
     .on('error', handleError)
     .pipe(autoprefixer({cascade: false})) // auto prefix
     .pipe(minifycss()) // minify everything
@@ -28,6 +32,8 @@ gulp.task('js', function() {
     .pipe(gulp.dest('public/js'));
 });
 
+gulp.task('jscss', ['js', 'css']);
+
 // Publish github page
 gulp.task('deploy', function() {
   return gulp.src('public/**/*')
@@ -40,7 +46,7 @@ gulp.task('deploy', function() {
 gulp.task('watch', function() {
   gulp.start('js', 'css');
 
-  gulp.watch('dev/sass/**/*.scss', ['css']);
+  gulp.watch('dev/less/**/*.less', ['css']);
   gulp.watch('dev/js/**/*.js', ['js']);
   gulp.watch('dev/img/**/*.{jpg,jpeg,png,gif,svg,ico}', ['img']);
  
