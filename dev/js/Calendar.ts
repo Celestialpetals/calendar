@@ -6,7 +6,7 @@ class Calendar {
   calIsOpen: boolean;
   presetIsOpen: boolean;
   sameDayRange: boolean;
-  element;
+  element: HTMLElement;
   selected;
   type;
   required: boolean;
@@ -33,10 +33,15 @@ class Calendar {
     this.presetIsOpen =   false;
     this.sameDayRange =   settings.same_day_range || false;
 
-    this.element =        settings.element || $('.daterange');
+    // allow constructing with a jQuery element
+    if (settings.element instanceof jQuery) {
+      settings.element = settings.element.get(0);
+    }
+
+    this.element =        settings.element || document.querySelector('.daterange');
     this.selected =       null;
 
-    this.type =           this.element.hasClass('daterange--single') ? 'single' : 'double';
+    this.type =           this.element.classList.contains('daterange--single') ? 'single' : 'double';
     this.required =       settings.required == false ? false : true;
 
     this.format =             settings.format || {};
@@ -196,11 +201,10 @@ class Calendar {
     });
 
     // Once you click into a selection.. this lets you click out
-    this.element.on('click', function() {
+    this.element.addEventListener('click', function() {
       window.addEventListener('click', function (f) {
-        var contains = self.element.find(f.target);
 
-        if (!contains.length) {
+        if (!self.element.contains(f.target as Node)) {
           if (self.presetIsOpen)
             self.presetToggle();
 
@@ -234,7 +238,7 @@ class Calendar {
     $('.dr-preset-list', this.element).slideToggle(200);
     $('.dr-input', this.element).toggleClass('dr-active');
     $('.dr-presets', this.element).toggleClass('dr-active');
-    this.element.toggleClass('dr-active');
+    this.element.classList.toggle('dr-active');
   }
 
   presetCreate() {
@@ -596,7 +600,7 @@ class Calendar {
       .slideDown(200);
     $('.dr-input', this.element).addClass('dr-active');
     $(selected).addClass('dr-active').focus();
-    this.element.addClass('dr-active');
+    this.element.classList.add('dr-active');
 
     this.calIsOpen = true;
   }
@@ -617,7 +621,7 @@ class Calendar {
     }
 
     $('.dr-input, .dr-date', this.element).removeClass('dr-active');
-    this.element.removeClass('dr-active');
+    this.element.classList.remove('dr-active');
 
     this.calIsOpen = false;
   }
@@ -688,7 +692,7 @@ class Calendar {
     });
 
     if (type == "double")
-      return this.element.append('<div class="dr-input">' +
+      return this.element.insertAdjacentHTML('beforeend', '<div class="dr-input">' +
         '<div class="dr-dates">' +
           '<div class="dr-date dr-date-start" contenteditable>'+ moment(this.start_date).format(this.format.input) +'</div>' +
           '<span class="dr-dates-dash">&ndash;</span>' +
@@ -722,7 +726,7 @@ class Calendar {
         (this.presets ? this.presetCreate()[0].outerHTML : '') +
       '</div>');
 
-    return this.element.append('<div class="dr-input">' +
+    return this.element.insertAdjacentHTML('beforeend', '<div class="dr-input">' +
       '<div class="dr-dates">' +
         '<div class="dr-date" contenteditable placeholder="'+ this.placeholder +'">'+ (this.settings.current_date ? moment(this.current_date).format(this.format.input) : '') +'</div>' +
       '</div>' +
