@@ -176,34 +176,24 @@ class Calendar {
       });
     });
 
-    $('.dr-month-switcher i', this.element).click(function() {
-      var m = $('.dr-month-switcher span', self.element).data('month');
-      var y = $('.dr-year-switcher span', self.element).data('year');
-      var this_moment = moment([y, m, 1]);
-      var back = this_moment.clone().subtract(1, 'month');
-      var forward = this_moment.clone().add(1, 'month').startOf('day');
+    var getSwitchHandler = function (unit: string) {
+      return function (switcher: Element) {
+        switcher.addEventListener('click', function () {
+          var m = (self.element.querySelector('.dr-month-switcher span') as HTMLElement).dataset['month'];
+          var y = (self.element.querySelector('.dr-year-switcher span') as HTMLElement).dataset['year'];
+          var this_moment = moment([parseInt(y), parseInt(m), 1]);
 
-      if ($(this).hasClass('dr-left')) {
-        self.calendarOpen(self.selected, back);
-      } else if ($(this).hasClass('dr-right')) {
-        self.calendarOpen(self.selected, forward);
-      }
-    });
+          if (switcher.classList.contains('dr-left')) {
+            self.calendarOpen(self.selected, this_moment.clone().subtract(1, unit));
+          } else if (switcher.classList.contains('dr-right')) {
+            self.calendarOpen(self.selected, this_moment.clone().add(1, unit).startOf('day'));
+          }
+        });
+      };
+    };
 
-    $('.dr-year-switcher i', this.element).click(function() {
-      var m = $('.dr-month-switcher span', self.element).data('month');
-      var y = $('.dr-year-switcher span', self.element).data('year');
-      var this_moment = moment([y, m, 1]);
-      var back = this_moment.clone().subtract(1, 'year');
-      var forward = this_moment.clone().add(1, 'year').startOf('day');
-
-
-      if ($(this).hasClass('dr-left')) {
-        self.calendarOpen(self.selected, back);
-      } else if ($(this).hasClass('dr-right')) {
-        self.calendarOpen(self.selected, forward);
-      }
-    });
+    eachElement(this.element.querySelectorAll('.dr-month-switcher i'), getSwitchHandler('month'));
+    eachElement(this.element.querySelectorAll('.dr-year-switcher i'), getSwitchHandler('year'));
 
     $('.dr-dates-dash', this.element).click(function() {
       $('.dr-date-start', self.element).trigger('click');
@@ -473,14 +463,17 @@ class Calendar {
     var past_year = moment(switcher || this.current_date).subtract(1, 'year').endOf('month');
     var this_moment = moment(switcher || this.current_date);
 
-    $('.dr-month-switcher span', this.element)
-      .data('month', this_moment.month())
-      .html(this_moment.format(this.format.jump_month));
-    $('.dr-year-switcher span', this.element)
-      .data('year', this_moment.year())
-      .html(this_moment.format(this.format.jump_year));
+    var monthSwitcher = this.element.querySelector('.dr-month-switcher span') as HTMLElement;
+    monthSwitcher.dataset['month'] = this_moment.month().toString();
+    monthSwitcher.textContent = this_moment.format(this.format.jump_month);
 
-    $('.dr-switcher i', this.element).removeClass('dr-disabled');
+    var yearSwitcher = this.element.querySelector('.dr-year-switcher span') as HTMLElement;
+    yearSwitcher.dataset['year'] = this_moment.year().toString();
+    yearSwitcher.textContent = this_moment.format(this.format.jump_year);
+
+    eachElement(this.element.querySelectorAll('.dr-switcher i'), function (el) {
+      el.classList.remove('dr-disabled');
+    });
 
     if (next_month.isAfter(this.latest_date))
       $('.dr-month-switcher .dr-right', this.element).addClass('dr-disabled');
