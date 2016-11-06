@@ -16,11 +16,11 @@ class Calendar {
   orig_start_date;
   orig_end_date;
   orig_current_date;
-  earliest_date;
-  latest_date;
-  end_date;
-  start_date;
-  current_date;
+  earliest_date: moment.Moment;
+  latest_date: moment.Moment;
+  end_date: moment.Moment;
+  start_date: moment.Moment;
+  current_date: moment.Moment;
   presets;
   callback;
 
