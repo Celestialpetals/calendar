@@ -13,7 +13,7 @@ class Calendar {
   presetIsOpen: boolean;
   sameDayRange: boolean;
   element: HTMLElement;
-  selected;
+  selected: HTMLElement | null;
   type;
   required: boolean;
   format;
@@ -100,25 +100,26 @@ class Calendar {
       });
     });
 
-    $('.dr-date', this.element).on({
-      'click': function() {
+    eachElement(this.element.querySelectorAll('.dr-date'), function (drDate: HTMLElement) {
+      drDate.addEventListener('click', function () {
         self.calendarOpen(this);
-      },
+      });
 
-      'keyup': function(event) {
-        if (event.keyCode == 9 && !self.calIsOpen && !self.start_date && !self.end_date)
+      drDate.addEventListener('keyup', function (event) {
+        if (event.keyCode === 9 /* tab */ && !self.calIsOpen && !self.start_date && !self.end_date) {
           self.calendarOpen(this);
-      },
+        }
+      });
 
-      'keydown': function(event) {
+      drDate.addEventListener('keydown', function (event) {
         switch (event.keyCode) {
 
           case 9: // Tab
-            if ($(self.selected).hasClass('dr-date-start')) {
+            if (self.selected && self.selected.classList.contains('dr-date-start')) {
               event.preventDefault();
               self.calendarCheckDates();
               self.calendarSetDates();
-              $('.dr-date-end', self.element).trigger('click');
+              (self.element.querySelector('.dr-date-end') as HTMLElement).click();
             } else {
               self.calendarCheckDates();
               self.calendarSetDates();
@@ -152,7 +153,7 @@ class Calendar {
 
             var back = moment(self.current_date).subtract(1, timeframe);
 
-            $(this).html(back.format(self.format.input));
+            drDate.textContent = back.format(self.format.input);
             self.current_date = back;
           break;
 
@@ -168,11 +169,11 @@ class Calendar {
 
             var forward = moment(self.current_date).add(1, timeframe);
 
-            $(this).html(forward.format(self.format.input));
+            drDate.textContent = forward.format(self.format.input);
             self.current_date = forward;
           break;
         }
-      }
+      });
     });
 
     $('.dr-month-switcher i', this.element).click(function() {
