@@ -1,6 +1,12 @@
 /// <reference path="vendor/moment.d.ts" />
 /// <reference path="../../node_modules/@types/jquery/index.d.ts" />
 
+function eachElement(nodeList: NodeListOf<Element>, callback: (el: Element) => void) {
+  for (var i = 0; i < nodeList.length; i++) {
+    callback(nodeList.item(i));
+  }
+}
+
 class Calendar {
   settings;
   calIsOpen: boolean;
@@ -82,16 +88,16 @@ class Calendar {
       });
     }
 
-    $('.dr-list-item', this.element).click(function() {
-      var start = $('.dr-item-aside', this).data('start');
-      var end = $('.dr-item-aside', this).data('end');
+    eachElement(this.element.querySelectorAll('.dr-list-item'), function (drListItem) {
+      drListItem.addEventListener('click', function () {
+          var aside = drListItem.querySelector('.dr-item-aside') as HTMLElement;
+          self.start_date = self.calendarCheckDate(aside.dataset['start']);
+          self.end_date = self.calendarCheckDate(aside.dataset['end']);
 
-      self.start_date = self.calendarCheckDate(start);
-      self.end_date = self.calendarCheckDate(end);
-
-      self.calendarSetDates();
-      self.presetToggle();
-      self.calendarSaveDates();
+          self.calendarSetDates();
+          self.presetToggle();
+          self.calendarSaveDates();
+      });
     });
 
     $('.dr-date', this.element).on({
