@@ -21,7 +21,7 @@ class Calendar {
   end_date: moment.Moment;
   start_date: moment.Moment;
   current_date: moment.Moment;
-  presets;
+  presets: boolean;
   callback;
 
   constructor(settings) {
@@ -76,9 +76,11 @@ class Calendar {
 
     this.calendarHTML(this.type);
 
-    $('.dr-presets', this.element).click(function() {
-      self.presetToggle();
-    });
+    if (this.presets) {
+      this.element.querySelector('.dr-presets').addEventListener('click', function () {
+        self.presetToggle();
+      });
+    }
 
     $('.dr-list-item', this.element).click(function() {
       var start = $('.dr-item-aside', this).data('start');
