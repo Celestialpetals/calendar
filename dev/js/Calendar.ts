@@ -195,9 +195,11 @@ class Calendar {
     eachElement(this.element.querySelectorAll('.dr-month-switcher i'), getSwitchHandler('month'));
     eachElement(this.element.querySelectorAll('.dr-year-switcher i'), getSwitchHandler('year'));
 
-    $('.dr-dates-dash', this.element).click(function() {
-      $('.dr-date-start', self.element).trigger('click');
-    });
+    if (this.type === 'double') {
+      this.element.querySelector('.dr-dates-dash').addEventListener('click', function () {
+        (self.element.querySelector('.dr-date-start') as HTMLElement).click();
+      });
+    }
 
     // Once you click into a selection.. this lets you click out
     this.element.addEventListener('click', function() {
@@ -209,7 +211,7 @@ class Calendar {
 
           if (self.calIsOpen) {
 
-            if ($(self.selected).hasClass("dr-date-end"))
+            if (self.selected.classList.contains('dr-date-end'))
               self.calendarSaveDates();
 
             self.calendarSetDates();
