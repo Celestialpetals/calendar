@@ -1,4 +1,5 @@
 .publish
 node_modules
+dev/js/Calendar.js
 public/.DS_Store
 public/css/_color-var-func.css

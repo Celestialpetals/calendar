@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "module": "UMD",
+        "moduleResolution": "node",
+        "noImplicitAny": false,
+        "removeComments": false,
+        "preserveConstEnums": true,
+        "sourceMap": false
+    }
+}

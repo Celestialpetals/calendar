@@ -1,18 +1,30 @@
-'use strict';
+/// <reference path="vendor/moment.d.ts" />
+/// <reference path="../../node_modules/@types/jquery/index.d.ts" />
 
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    // AMD. Register as an anonymous module.
-    define(['jquery', 'moment'], factory);
-  } else if (typeof exports === 'object') {
-    // Node/CommonJS
-    module.exports = factory(require('jquery'), require('moment'));
-  } else {
-    // Browser globals
-    root.Calendar = factory(jQuery, moment);
-  }
-} (this, function ($, moment) {
-  function Calendar(settings) {
+class Calendar {
+  settings;
+  calIsOpen: boolean;
+  presetIsOpen: boolean;
+  sameDayRange: boolean;
+  element;
+  selected;
+  type;
+  required: boolean;
+  format;
+  placeholder;
+  days_array;
+  orig_start_date;
+  orig_end_date;
+  orig_current_date;
+  earliest_date;
+  latest_date;
+  end_date;
+  start_date;
+  current_date;
+  presets;
+  callback;
+
+  constructor(settings) {
     var self = this;
 
     this.settings =       settings;
@@ -205,8 +217,7 @@
     });
   }
 
-
-  Calendar.prototype.presetToggle = function() {
+  presetToggle() {
     if (this.presetIsOpen == false) {
       this.orig_start_date = this.start_date;
       this.orig_end_date = this.end_date;
@@ -226,8 +237,7 @@
     this.element.toggleClass('dr-active');
   }
 
-
-  Calendar.prototype.presetCreate = function() {
+  presetCreate() {
     var self = this;
     var ul_presets = $('<ul class="dr-preset-list" style="display: none;"></ul>');
     var presets = typeof self.settings.presets === 'object' ? self.settings.presets :
@@ -300,8 +310,7 @@
     return ul_presets;
   }
 
-
-  Calendar.prototype.calendarSetDates = function() {
+  calendarSetDates() {
     $('.dr-date-start', this.element).html(moment(this.start_date).format(this.format.input));
     $('.dr-date-end', this.element).html(moment(this.end_date).format(this.format.input));
 
@@ -317,8 +326,7 @@
     }
   }
 
-
-  Calendar.prototype.calendarSaveDates = function() {
+  calendarSaveDates() {
     if (this.type == 'double') {
       if (!moment(this.orig_end_date).isSame(this.end_date) || !moment(this.orig_start_date).isSame(this.start_date))
         return this.callback();
@@ -328,7 +336,7 @@
     }
   }
 
-  Calendar.prototype.calendarCheckDate = function(d) {
+  calendarCheckDate(d) {
     // Today
     if (d == 'today' || d == 'now')
       return moment().isAfter(this.latest_date) ? this.latest_date : moment();
@@ -363,7 +371,7 @@
     return parsed_d;
   }
 
-  Calendar.prototype.calendarCheckDates = function() {
+  calendarCheckDates() {
     var startTxt = $('.dr-date-start', this.element).html();
     var endTxt = $('.dr-date-end', this.element).html();
     var c = this.calendarCheckDate($(this.selected).html());
@@ -410,8 +418,7 @@
     this.current_date = c.isValid() ? c : this.current_date;
   }
 
-
-  Calendar.prototype.stringToDate = function(str) {
+  stringToDate(str) {
     var date_arr = str.split(' ');
 
     if (date_arr[2] == 'ago') {
@@ -425,8 +432,7 @@
     return this.current_date;
   }
 
-
-  Calendar.prototype.calendarOpen = function(selected, switcher) {
+  calendarOpen(selected, switcher?) {
     var self = this;
     var other;
     var cal_width = $('.dr-dates', this.element).innerWidth() - 8;
@@ -595,8 +601,7 @@
     this.calIsOpen = true;
   }
 
-
-  Calendar.prototype.calendarClose = function(type) {
+  calendarClose(type?) {
     var self = this;
 
     if (!this.calIsOpen || this.presetIsOpen || type == 'force') {
@@ -617,8 +622,7 @@
     this.calIsOpen = false;
   }
 
-
-  Calendar.prototype.calendarCreate = function(switcher) {
+  calendarCreate(switcher) {
     var self = this;
     var array = this.calendarArray(this.start_date, this.end_date, this.current_date, switcher);
 
@@ -647,8 +651,7 @@
     });
   }
 
-
-  Calendar.prototype.calendarArray = function(start, end, current, switcher) {
+  calendarArray(start, end, current, switcher) {
     var self = this;
     current = moment(current || start || end).startOf('day');
 
@@ -676,8 +679,7 @@
     return daysInRange;
   }
 
-
-  Calendar.prototype.calendarHTML = function(type) {
+  calendarHTML(type) {
     var ul_days_of_the_week = $('<ul class="dr-days-of-week-list"></ul>');
     var days = this.days_array.splice(moment.localeData().firstDayOfWeek()).concat(this.days_array.splice(0, moment.localeData().firstDayOfWeek()));
 
@@ -746,13 +748,11 @@
     '</div>');
   }
 
-
-  Calendar.prototype.parseDate = function(d) {
+  parseDate(d) {
     return moment(d, this.format.input);
-  };
+  }
 
-
-  Calendar.prototype.range = function(length) {
+  range(length) {
     var range = new Array(length);
 
     for (var idx = 0; idx < length; idx++) {
@@ -761,7 +761,4 @@
 
     return range;
   }
-
-
-  return Calendar;
-}));
+}
